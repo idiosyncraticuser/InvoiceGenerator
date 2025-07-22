@@ -1,0 +1,235 @@
+/* Set base font and background for the page */
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+/* Main container styling */
+.container {
+  background: #fff;
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 30px 40px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 6px solid #007bff; /* Accent border */
+}
+
+/* Center and style main heading */
+h2 {
+  text-align: center;
+  margin-bottom: 40px;
+}
+h2 span {
+  color: #007bff; /* Highlighted text in heading */
+}
+
+/* Spacing for main sections */
+.invoice-details,
+.add-item,
+.items-table,
+.totals,
+.actions {
+  margin-bottom: 20px;
+}
+
+/* Style form labels */
+label {
+  display: inline-block;
+  width: 120px;
+  font-weight: bold;
+  color: #333;
+  letter-spacing: 0.5px;
+}
+
+/* Style text, number, and date inputs */
+input[type="text"],
+input[type="number"],
+input[type="date"] {
+  padding: 6px;
+  margin-bottom: 8px;
+  width: 200px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+/* Focus effect for inputs */
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus {
+  border: 1.5px solid #007bff;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
+  outline: none;
+}
+
+/* Table styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+}
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+th {
+  background: #f0f0f0;
+}
+
+/* Totals section styling */
+.totals {
+  text-align: right;
+  border-top: 1px solid #eee; /* Divider line */
+  padding-top: 10px;
+}
+
+/* Button styling for actions */
+.actions button {
+  padding: 8px 18px;
+  margin-right: 10px;
+  border: none;
+  background: #007bff;
+  color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 123, 255, 0.15);
+  transition: background 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+.actions button:last-child {
+  background: #28a745; /* Special color for last button */
+}
+
+/* Hover effects for buttons */
+.actions button:hover:not(:disabled) {
+  background: #0056b3;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.18);
+}
+.actions button:last-child:hover:not(:disabled) {
+  background: #218838;
+}
+
+/* Disabled button styling */
+.actions button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* Narrower number input in add-item section */
+.add-item input[type="number"] {
+  width: 110px;
+}
+
+/* Responsive layout for add-item row */
+.item-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Wider description input in item-row */
+.item-row input[type="text"]#itemDesc {
+  flex: 2 1 200px; /* Wider for description */
+  width: 180px;
+  flex-shrink: 0;
+}
+
+/* Narrower number inputs in item-row */
+.item-row input[type="number"] {
+  flex: 1 1 80px; /* Narrower for others */
+  width: 80px;
+  flex-shrink: 0;
+}
+
+/* Button styling in item-row */
+.item-row button {
+  flex: 0 0 auto;
+  padding: 6px 14px;
+  height: 38px;
+  flex-shrink: 0;
+}
+
+/* Responsive: stack item-row on small screens */
+@media screen and (max-width: 700px) {
+  .item-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .item-row input,
+  .item-row button {
+    width: 100%;
+  }
+}
+
+/* Responsive: stack item-row on even smaller screens */
+@media screen and (max-width: 650px) {
+  .item-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .item-row input,
+  .item-row button {
+    width: 100%;
+  }
+}
+
+/* Responsive: adjust invoice-details and add-item row */
+@media screen and (max-width: 600px) {
+  .invoice-details div,
+  .add-item .item-row {
+    flex-direction: column;
+    display: flex;
+    gap: 8px;
+  }
+  .container {
+    padding: 20px;
+  }
+  table th,
+  table td {
+    font-size: 13px;
+    padding: 6px;
+  }
+}
+
+/* Prevent horizontal overflow in item-row */
+.item-row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+  align-items: center;
+  overflow-x: auto;
+}
+
+/* Subtle hover effect for table rows */
+.items-table tr:hover {
+  background: #f9f9f9;
+}
+
+/* Header bar styling */
+.header {
+  background-color: #007bff;
+  margin-top: -50px;
+  height: 70px;
+}
+
+/* Header text styling */
+.header-text {
+  font-family: "Arial", sans-serif;
+  font-weight: 700;
+  font-size: 40px;
+  padding: 10px;
+  text-align: left;
+  margin-top: 50px;
+  padding-left: 50px;
+}
+
+/* Add a soft gradient to the body background */
+body {
+  background: linear-gradient(120deg, #f4f4f4 60%, #e3f0ff 100%);
+}

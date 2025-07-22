@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple Invoice Generator</title>
+  <!-- Link to external CSS file -->
+  <link rel="stylesheet" href="style.css">
+  <!-- Link to external JavaScript file, loaded after HTML -->
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <!-- Header section -->
+  <div class="header">
+    <p class="header-text">Billing Solutions</p>
+  </div>
+  <div class="container">
+    <!-- Main title -->
+    <h2>Invoice <span>Generator</span></h2>
+    <!-- Invoice details input section -->
+    <div class="invoice-details">
+      <div>
+        <label for="invoiceNo">Invoice #</label>
+        <input type="text" id="invoiceNo" placeholder="e.g. 1001">
+      </div>
+      <div>
+        <label for="invoiceDate">Date</label>
+        <input type="date" id="invoiceDate">
+      </div>
+      <div>
+        <label for="clientName">Client Name</label>
+        <input type="text" id="clientName" placeholder="Client Name">
+      </div>
+    </div>
+
+    <!-- Section to add new items to the invoice -->
+    <div class="add-item">
+      <h4>Add Item</h4>
+      <div class="item-row">
+        <input type="text" id="itemDesc" placeholder="Description">
+        <input type="number" id="itemQty" placeholder="Qty" min="1" value="1">
+        <input type="number" id="itemPrice" placeholder="Unit Price (₹)" min="0" step="0.01">
+        <input type="number" id="itemCGST" placeholder="CGST (%)" min="0" step="0.01">
+        <input type="number" id="itemSGST" placeholder="SGST (%)" min="0" step="0.01">
+        <!-- Button to add item to the table -->
+        <button onclick="addItem()" id="addBtn">Add</button>
+      </div>
+    </div>
+
+    <!-- Table to display all added items -->
+    <div class="items-table">
+      <table id="itemsTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Description</th>
+            <th>Qty</th>
+            <th>Unit Price (₹)</th>
+            <th>CGST %</th>
+            <th>SGST %</th>
+            <th>Total (₹)</th>
+            <th>Remove</th>
+          </tr>
+        </thead>
+        <tbody></tbody> <!-- Items will be added here dynamically -->
+      </table>
+    </div>
+
+    <!-- Section to show totals -->
+    <div class="totals">
+      <div>Subtotal: ₹<span id="subtotal">0.00</span></div>
+      <div>Total CGST: ₹<span id="cgstTotal">0.00</span></div>
+      <div>Total SGST: ₹<span id="sgstTotal">0.00</span></div>
+      <div><strong>Grand Total: ₹<span id="grandTotal">0.00</span></strong></div>
+    </div>
+
+    <!-- Action buttons for generating, printing, and resetting the invoice -->
+    <div class="actions">
+      <button onclick="generateInvoice()" id="generateBtn">Generate Invoice</button>
+      <button onclick="printInvoice()" id="printBtn" disabled>Print</button>
+      <button onclick="resetInvoice()">Reset</button>
+    </div>
+
+    <!-- Output area for the generated invoice, hidden by default -->
+    <div id="invoiceOutput" style="display:none; margin-top:30px;"></div>
+  </div>
+</body>
+</html>

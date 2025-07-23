@@ -4,42 +4,53 @@ function addItem() {
     const desc = document.getElementById('itemDesc').value.trim();
     const qty = parseInt(document.getElementById('itemQty').value);
     const price = parseFloat(document.getElementById('itemPrice').value);
-    const cgst = parseFloat(document.getElementById('itemCGST').value);
-    const sgst = parseFloat(document.getElementById('itemSGST').value);
+    const discount = parseFloat(document.getElementById('itemDiscount').value) || 0;
+    const cgst = parseFloat(document.getElementById('itemCGST').value) || 0;
+    const sgst = parseFloat(document.getElementById('itemSGST').value) || 0;
 
-    if (!desc || isNaN(qty) || qty < 1 || isNaN(price) || price < 0 || isNaN(cgst) || isNaN(sgst)) {
+    if (!desc || isNaN(qty) || qty < 1 || isNaN(price) || price < 0) {
         alert('Please enter valid item details.');
         return;
     }
 
-    items.push({ desc, qty, price, cgst, sgst });
+    items.push({ desc, qty, price, discount, cgst, sgst });
+
+    // Clear fields
     document.getElementById('itemDesc').value = '';
     document.getElementById('itemQty').value = 1;
     document.getElementById('itemPrice').value = '';
+    document.getElementById('itemDiscount').value = '';
     document.getElementById('itemCGST').value = '';
     document.getElementById('itemSGST').value = '';
+    document.getElementById('itemDesc').focus();
+
     renderItems();
 }
 
-function removeItem(idx) {
-    items.splice(idx, 1);
+function removeItem(index) {
+    items.splice(index, 1);
     renderItems();
 }
 
 function renderItems() {
     const tbody = document.querySelector('#itemsTable tbody');
     tbody.innerHTML = '';
-    let subtotal = 0;
+
+    let grossTotal = 0;       // Before discount
+    let totalDiscount = 0;
     let totalCGST = 0;
     let totalSGST = 0;
 
     items.forEach((item, i) => {
-        const baseTotal = item.qty * item.price;
+        const originalTotal = item.qty * item.price;
+        const discountAmount = originalTotal * (item.discount / 100);
+        const baseTotal = originalTotal - discountAmount;
         const cgstAmount = baseTotal * (item.cgst / 100);
         const sgstAmount = baseTotal * (item.sgst / 100);
         const itemTotal = baseTotal + cgstAmount + sgstAmount;
 
-        subtotal += baseTotal;
+        grossTotal += originalTotal;
+        totalDiscount += discountAmount;
         totalCGST += cgstAmount;
         totalSGST += sgstAmount;
 
@@ -49,6 +60,7 @@ function renderItems() {
             <td>${item.desc}</td>
             <td>${item.qty}</td>
             <td>₹${item.price.toFixed(2)}</td>
+            <td>${item.discount}%</td>
             <td>${item.cgst}%</td>
             <td>${item.sgst}%</td>
             <td>₹${itemTotal.toFixed(2)}</td>
@@ -57,8 +69,10 @@ function renderItems() {
         tbody.appendChild(tr);
     });
 
-    const grandTotal = subtotal + totalCGST + totalSGST;
-    document.getElementById('subtotal').textContent = subtotal.toFixed(2);
+    const grandTotal = grossTotal - totalDiscount + totalCGST + totalSGST;
+
+    document.getElementById('subtotal').textContent = grossTotal.toFixed(2);
+    document.getElementById('discountTotal').textContent = totalDiscount.toFixed(2);
     document.getElementById('cgstTotal').textContent = totalCGST.toFixed(2);
     document.getElementById('sgstTotal').textContent = totalSGST.toFixed(2);
     document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
@@ -74,6 +88,8 @@ function generateInvoice() {
         return;
     }
 
+    let grossTotal = 0, totalDiscount = 0, totalCGST = 0, totalSGST = 0;
+
     let html = `
         <h3>Invoice #${invoiceNo}</h3>
         <div>Date: ${invoiceDate}</div>
@@ -84,21 +100,23 @@ function generateInvoice() {
                 <th>Description</th>
                 <th>Qty</th>
                 <th>Unit Price (₹)</th>
+                <th>Discount %</th>
                 <th>CGST %</th>
                 <th>SGST %</th>
                 <th>Total (₹)</th>
             </tr>
     `;
 
-    let subtotal = 0, totalCGST = 0, totalSGST = 0;
-
     items.forEach((item, i) => {
-        const baseTotal = item.qty * item.price;
+        const originalTotal = item.qty * item.price;
+        const discountAmount = originalTotal * (item.discount / 100);
+        const baseTotal = originalTotal - discountAmount;
         const cgstAmount = baseTotal * (item.cgst / 100);
         const sgstAmount = baseTotal * (item.sgst / 100);
         const itemTotal = baseTotal + cgstAmount + sgstAmount;
 
-        subtotal += baseTotal;
+        grossTotal += originalTotal;
+        totalDiscount += discountAmount;
         totalCGST += cgstAmount;
         totalSGST += sgstAmount;
 
@@ -108,6 +126,7 @@ function generateInvoice() {
                 <td>${item.desc}</td>
                 <td>${item.qty}</td>
                 <td>₹${item.price.toFixed(2)}</td>
+                <td>${item.discount}%</td>
                 <td>${item.cgst}%</td>
                 <td>${item.sgst}%</td>
                 <td>₹${itemTotal.toFixed(2)}</td>
@@ -115,12 +134,13 @@ function generateInvoice() {
         `;
     });
 
-    const grandTotal = subtotal + totalCGST + totalSGST;
+    const grandTotal = grossTotal - totalDiscount + totalCGST + totalSGST;
 
     html += `
         </table>
         <div style="text-align:right;margin-top:10px;">
-            Subtotal: ₹${subtotal.toFixed(2)}<br>
+            Subtotal: ₹${grossTotal.toFixed(2)}<br>
+            Total Discount: ₹${totalDiscount.toFixed(2)}<br>
             Total CGST: ₹${totalCGST.toFixed(2)}<br>
             Total SGST: ₹${totalSGST.toFixed(2)}<br>
             <strong>Grand Total: ₹${grandTotal.toFixed(2)}</strong>
@@ -150,6 +170,7 @@ function resetInvoice() {
     document.getElementById('itemDesc').value = '';
     document.getElementById('itemQty').value = 1;
     document.getElementById('itemPrice').value = '';
+    document.getElementById('itemDiscount').value = '';
     document.getElementById('itemCGST').value = '';
     document.getElementById('itemSGST').value = '';
     items = [];
@@ -158,10 +179,7 @@ function resetInvoice() {
     document.getElementById('printBtn').disabled = true;
 }
 
-// Initialize
-renderItems();
-
-// Focus navigation via Enter key
+// Keyboard Navigation
 function setupKeyboardNavigation() {
     const fields = [
         'invoiceNo',
@@ -170,6 +188,7 @@ function setupKeyboardNavigation() {
         'itemDesc',
         'itemQty',
         'itemPrice',
+        'itemDiscount',
         'itemCGST',
         'itemSGST'
     ];
@@ -184,18 +203,17 @@ function setupKeyboardNavigation() {
                 if (nextId) {
                     document.getElementById(nextId).focus();
                 } else {
-                    // No next field, so click Add
                     document.getElementById('addBtn').click();
-                    document.getElementById('itemDesc').focus();
                 }
             }
         });
     }
 }
 
-// Auto focus on first field on load
 window.onload = function () {
-    document.getElementById('invoiceNo').focus();
     setupKeyboardNavigation();
+    document.getElementById('invoiceNo').focus();
 };
 
+// Initial render
+renderItems();

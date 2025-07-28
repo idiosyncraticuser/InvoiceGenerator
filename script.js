@@ -88,70 +88,101 @@ function generateInvoice() {
         return;
     }
 
-    let grossTotal = 0, totalDiscount = 0, totalCGST = 0, totalSGST = 0;
+    const sellerDetails = `
+        <div style="font-size:14px;">
+            <strong>Kumawat Enterprises</strong><br>
+            SHOP NO-4 PRATAP NAGAR-302033<br>
+            kumawatenterprises@gmail.com<br>
+            GSTIN: 27DPAUC1177K1OZ
+        </div>`;
 
-    let html = `
-        <h3>Invoice #${invoiceNo}</h3>
-        <div>Date: ${invoiceDate}</div>
-        <div>Client: ${clientName}</div>
-        <table style="width:100%;margin-top:15px;border-collapse:collapse;" border="1">
-            <tr>
-                <th>#</th>
-                <th>Description</th>
-                <th>Qty</th>
-                <th>Unit Price (₹)</th>
-                <th>Discount %</th>
-                <th>CGST %</th>
-                <th>SGST %</th>
-                <th>Total (₹)</th>
-            </tr>
-    `;
+    function generateCopy(copyType) {
+        let grossTotal = 0, totalDiscount = 0, totalCGST = 0, totalSGST = 0;
 
-    items.forEach((item, i) => {
-        const originalTotal = item.qty * item.price;
-        const discountAmount = originalTotal * (item.discount / 100);
-        const baseTotal = originalTotal - discountAmount;
-        const cgstAmount = baseTotal * (item.cgst / 100);
-        const sgstAmount = baseTotal * (item.sgst / 100);
-        const itemTotal = baseTotal + cgstAmount + sgstAmount;
+        let html = `
+            <div style="padding:20px; border: 1px dashed #000; margin-bottom: 30px;">
+                 <h3 style="display:none; text-align:center;">${copyType}</h3>
+                <div style="display:flex; justify-content:space-between; margin-bottom: 10px;">
+                    <div style="font-size:14px;">
+                        <strong>Invoice #${invoiceNo}</strong><br>
+                        Date: ${invoiceDate}<br>
+                        Client: ${clientName}
+                    </div>
+                    ${sellerDetails}
+                </div>
 
-        grossTotal += originalTotal;
-        totalDiscount += discountAmount;
-        totalCGST += cgstAmount;
-        totalSGST += sgstAmount;
+                <table style="width:100%;margin-top:10px;border-collapse:collapse;" border="1">
+                    <tr>
+                        <th>S.No.</th>
+                        <th>Description</th>
+                        <th>Qty</th>
+                        <th>Unit Price (₹)</th>
+                        <th>Discount %</th>
+                        <th>CGST %</th>
+                        <th>SGST %</th>
+                        <th>Total (₹)</th>
+                    </tr>
+        `;
+
+        items.forEach((item, i) => {
+            const originalTotal = item.qty * item.price;
+            const discountAmount = originalTotal * (item.discount / 100);
+            const baseTotal = originalTotal - discountAmount;
+            const cgstAmount = baseTotal * (item.cgst / 100);
+            const sgstAmount = baseTotal * (item.sgst / 100);
+            const itemTotal = baseTotal + cgstAmount + sgstAmount;
+
+            grossTotal += originalTotal;
+            totalDiscount += discountAmount;
+            totalCGST += cgstAmount;
+            totalSGST += sgstAmount;
+
+            html += `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td>${item.desc}</td>
+                    <td>${item.qty}</td>
+                    <td>₹${item.price.toFixed(2)}</td>
+                    <td>${item.discount}%</td>
+                    <td>${item.cgst}%</td>
+                    <td>${item.sgst}%</td>
+                    <td>₹${itemTotal.toFixed(2)}</td>
+                </tr>
+            `;
+        });
+
+        const grandTotal = grossTotal - totalDiscount + totalCGST + totalSGST;
 
         html += `
-            <tr>
-                <td>${i + 1}</td>
-                <td>${item.desc}</td>
-                <td>${item.qty}</td>
-                <td>₹${item.price.toFixed(2)}</td>
-                <td>${item.discount}%</td>
-                <td>${item.cgst}%</td>
-                <td>${item.sgst}%</td>
-                <td>₹${itemTotal.toFixed(2)}</td>
-            </tr>
+                </table>
+                <div style="text-align:right;margin-top:10px;font-size:14px;">
+                    Subtotal: ₹${grossTotal.toFixed(2)}<br>
+                    Total Discount: ₹${totalDiscount.toFixed(2)}<br>
+                    Total CGST: ₹${totalCGST.toFixed(2)}<br>
+                    Total SGST: ₹${totalSGST.toFixed(2)}<br>
+                    <strong>Grand Total: ₹${grandTotal.toFixed(2)}</strong>
+                </div>
+            </div>
         `;
-    });
 
-    const grandTotal = grossTotal - totalDiscount + totalCGST + totalSGST;
-
-    html += `
-        </table>
-        <div style="text-align:right;margin-top:10px;">
-            Subtotal: ₹${grossTotal.toFixed(2)}<br>
-            Total Discount: ₹${totalDiscount.toFixed(2)}<br>
-            Total CGST: ₹${totalCGST.toFixed(2)}<br>
-            Total SGST: ₹${totalSGST.toFixed(2)}<br>
-            <strong>Grand Total: ₹${grandTotal.toFixed(2)}</strong>
-        </div>
-    `;
+        return html;
+    }
 
     const output = document.getElementById('invoiceOutput');
-    output.innerHTML = html;
+    
+   output.innerHTML = `
+    <div>
+        ${generateCopy("Seller Copy")}
+        ${generateCopy("Customer Copy")}
+    </div>
+`;
+
+
     output.style.display = 'block';
     document.getElementById('printBtn').disabled = false;
 }
+
+
 
 function printInvoice() {
     const output = document.getElementById('invoiceOutput').innerHTML;
@@ -217,3 +248,25 @@ window.onload = function () {
 
 // Initial render
 renderItems();
+
+
+// DARK MODE CODE
+
+function toggleDarkMode() {
+    document.body.classList.toggle('dark');
+    localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+}
+
+// Load theme from localStorage
+window.onload = function () {
+    setupKeyboardNavigation();
+    document.getElementById('invoiceNo').focus();
+
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark');
+    }
+};
+
+// DARK MODE CODE ENDS
+

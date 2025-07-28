@@ -7,7 +7,7 @@ body {
 }
 
 /* Main container styling */
-.container {
+.container-main {
   background: #fff;
   max-width: 1000px;
   margin: 40px auto;
@@ -21,6 +21,7 @@ body {
 h2 {
   text-align: center;
   margin-bottom: 40px;
+  font-family: "Poppins", sans-serif;
 }
 h2 span {
   color: #007bff; /* Highlighted text in heading */
@@ -34,7 +35,20 @@ h2 span {
 .actions {
   margin-bottom: 20px;
 }
+/*Invoice Details Grid*/
 
+.invoice-details{
+  display: grid;
+  gap: 3rem;
+  grid-template-columns: 1fr 2fr;
+}
+.invoice-no, .invoiceDate, .clientName{
+  grid-area: 1/1/2/2;
+}
+.seller-details{
+  margin-top: 30px;
+  grid-area: 1/2/2/3;
+}
 /* Style form labels */
 label {
   display: inline-block;
@@ -42,7 +56,30 @@ label {
   font-weight: bold;
   color: #333;
   letter-spacing: 0.5px;
-}
+ }
+
+ .seller-details{
+  display: flex;
+  flex-direction: column;
+ }
+ /* .seller-details input{
+  
+  width: 450px !important;
+  height: 180px;
+  font-weight: bold;
+  color: #333;
+  letter-spacing: 0.5px;
+ } */
+
+ .seller-details h3{
+  margin: 10px;
+ }
+ .seller-details h6{
+  margin: 10px;
+ }
+.invoice-no{
+  margin-top:30px;
+} 
 
 /* Style text, number, and date inputs */
 input[type="text"],
@@ -187,6 +224,7 @@ th {
     display: flex;
     gap: 8px;
   }
+
   .container {
     padding: 20px;
   }
@@ -213,23 +251,151 @@ th {
 
 /* Header bar styling */
 .header {
-  background-color: #007bff;
+  /* background-color: #007bff;
   margin-top: -50px;
-  height: 70px;
+  height: 70px; */
+  background: linear-gradient(to right, #007bff, #0056b3);
+  color: white;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-/* Header text styling */
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.header-logo {
+  height: 60px;
+  width: auto;
+  margin-top: -12px;
+}
+
+.header h1 {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600 ;
+  font-size: 35px;
+}
+
+.tagline {
+  font-size: 15px;
+  margin-top: 0px;
+  font-style: italic;
+  color: #e0e0e0;
+}
+/* //Header text styling
 .header-text {
-  font-family: "Arial", sans-serif;
-  font-weight: 700;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
   font-size: 40px;
   padding: 10px;
   text-align: left;
   margin-top: 50px;
   padding-left: 50px;
+  color: white;
+} */
+
+/* Header bar styling */
+.footer {
+  background: #007bff;
+  color: white;
+  padding: 15px 0;
+  text-align: center;
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+  position: relative;
+  bottom: 0;
+  width: 100%;
+}
+
+/* Header text styling */
+/* .footer-text {
+  font-family: "Delius";
+  font-size: 15px;
+  padding: 10px;
+  text-align: center;
+  margin-top: 25px;
+} */
+.footer-content {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 1px;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
 }
 
 /* Add a soft gradient to the body background */
 body {
   background: linear-gradient(120deg, #f4f4f4 60%, #e3f0ff 100%);
 }
+.btn-css{
+  margin-top: -170px;
+}
+
+/*DARK MODE CODE*/
+/* 
+body.dark {
+  background: #121212;
+  color: #e0e0e0;
+}
+
+body.dark input,
+body.dark table,
+body.dark .container {
+  background: #1e1e1e;
+  color: #e0e0e0;
+  border-color: #333;
+}
+
+body.dark input::placeholder {
+  color: #aaa;
+}
+
+body.dark table th {
+  background: #333;
+}
+
+body.dark .actions button {
+  background: #333;
+  color: #fff;
+  border: 1px solid #555;
+}
+
+body.dark .actions button:hover {
+  background: #555;
+} */
+/*Dark mode code ends*/
+.add-btn-style{
+  color: #fff;
+  border-radius: 4px;
+  border: 0px;
+  box-shadow: 0 2px 6px rgba(0, 123, 255, 0.15);
+  transition: background 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  background-color: #28a745;
+  margin-top: -8px;
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
+  body * {
+    visibility: hidden;
+  }
+  #invoiceOutput, #invoiceOutput * {
+    visibility: visible;
+  }
+  #invoiceOutput {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+}
+

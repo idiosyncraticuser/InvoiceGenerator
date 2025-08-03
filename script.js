@@ -1,7 +1,7 @@
-let items = [];
+let items = []; //created items array
 
 function addItem() {
-    const desc = document.getElementById('itemDesc').value.trim();
+    const desc = document.getElementById('itemDesc').value.trim(); //trim() to remove whitespace from both ends of a string
     const qty = parseInt(document.getElementById('itemQty').value);
     const price = parseFloat(document.getElementById('itemPrice').value);
     const discount = parseFloat(document.getElementById('itemDiscount').value) || 0;
@@ -13,8 +13,8 @@ function addItem() {
         return;
     }
 
-    items.push({ desc, qty, price, discount, cgst, sgst });
-
+    items.push({ desc, qty, price, discount, cgst, sgst });  //elements pushed in "items" array
+ 
     // Clear fields
     document.getElementById('itemDesc').value = '';
     document.getElementById('itemQty').value = 1;
@@ -82,8 +82,9 @@ function generateInvoice() {
     const invoiceNo = document.getElementById('invoiceNo').value.trim();
     const invoiceDate = document.getElementById('invoiceDate').value;
     const clientName = document.getElementById('clientName').value.trim();
+    const clientAdd = document.getElementById('clientAdd').value.trim();
 
-    if (!invoiceNo || !invoiceDate || !clientName || items.length === 0) {
+    if (!invoiceNo || !invoiceDate || !clientName || !clientAdd || items.length === 0) {
         alert('Please fill all invoice details and add at least one item.');
         return;
     }
@@ -105,9 +106,9 @@ function generateInvoice() {
                 <div style="display:flex; justify-content:space-between; margin-bottom: 10px;">
                     <div style="font-size:14px;">
                         <strong>Invoice #${invoiceNo}</strong><br>
-                        Date: ${invoiceDate}<br>
-                        Client: ${clientName}
+                        Date: ${invoiceDate}  
                     </div>
+                    <div>Client Details:</br>${clientName}</strong></br></div>
                     ${sellerDetails}
                 </div>
 
@@ -198,6 +199,7 @@ function resetInvoice() {
     document.getElementById('invoiceNo').value = '';
     document.getElementById('invoiceDate').value = '';
     document.getElementById('clientName').value = '';
+    document.getElementById('clientAdd').value = '';
     document.getElementById('itemDesc').value = '';
     document.getElementById('itemQty').value = 1;
     document.getElementById('itemPrice').value = '';
@@ -216,6 +218,7 @@ function setupKeyboardNavigation() {
         'invoiceNo',
         'invoiceDate',
         'clientName',
+        'clientAdd',
         'itemDesc',
         'itemQty',
         'itemPrice',
@@ -250,23 +253,4 @@ window.onload = function () {
 renderItems();
 
 
-// DARK MODE CODE
-
-function toggleDarkMode() {
-    document.body.classList.toggle('dark');
-    localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-}
-
-// Load theme from localStorage
-window.onload = function () {
-    setupKeyboardNavigation();
-    document.getElementById('invoiceNo').focus();
-
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-        document.body.classList.add('dark');
-    }
-};
-
-// DARK MODE CODE ENDS
 

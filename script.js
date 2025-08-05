@@ -77,8 +77,9 @@ function renderItems() {
     document.getElementById('sgstTotal').textContent = totalSGST.toFixed(2);
     document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
 }
-
-function generateInvoice() {
+// Replace your existing generateInvoice function with this one.
+async function generateInvoice() {
+    // --- PART 1: GATHER AND VALIDATE DATA (This is from your original code) ---
     const invoiceNo = document.getElementById('invoiceNo').value.trim();
     const invoiceDate = document.getElementById('invoiceDate').value;
     const clientName = document.getElementById('clientName').value.trim();
@@ -89,6 +90,47 @@ function generateInvoice() {
         return;
     }
 
+    // --- PART 2: SAVE TO DATABASE (This is the new part) ---
+    try {
+        // Prepare the data object to send to the server
+        const invoiceData = {
+            invoiceNo: invoiceNo,
+            invoiceDate: invoiceDate,
+            clientName: clientName,
+            clientAdd: clientAdd,
+            items: items,
+            subtotal: parseFloat(document.getElementById('subtotal').textContent),
+            discountTotal: parseFloat(document.getElementById('discountTotal').textContent),
+            cgstTotal: parseFloat(document.getElementById('cgstTotal').textContent),
+            sgstTotal: parseFloat(document.getElementById('sgstTotal').textContent),
+            grandTotal: parseFloat(document.getElementById('grandTotal').textContent)
+        };
+
+        // Send the data to your PHP script
+        const response = await fetch('/web/save_invoice.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(invoiceData)
+        });
+
+        // If the save fails, show an error and stop
+        if (!response.ok) {
+            const errorResult = await response.json();
+            alert(`Failed to save invoice to database: ${errorResult.message}`);
+            return;
+        }
+        
+        console.log("Invoice data was saved successfully.");
+
+    } catch (error) {
+        console.error('Network or connection error while saving:', error);
+        alert('A network error occurred. The invoice could not be saved.');
+        return;
+    }
+
+    // --- PART 3: GENERATE ON-SCREEN PREVIEW (This is from your original code, UNCHANGED) ---
+    // This code only runs if the database save in Part 2 was successful.
+    
     const sellerDetails = `
         <div style="font-size:14px;">
             <strong>Kumawat Enterprises</strong><br>
@@ -108,12 +150,16 @@ function generateInvoice() {
                         <strong>Invoice #${invoiceNo}</strong><br>
                         Date: ${invoiceDate}  
                     </div>
-                    <div>Client Details:</br>${clientName}</strong></br></div>
+                    <div><strong>Client Details</strong></br>
+                    ${clientName}</strong></br>
+                    ${clientAdd}</strong></br>
+                    </div>
                     ${sellerDetails}
                 </div>
 
                 <table style="width:100%;margin-top:10px;border-collapse:collapse;" border="1">
-                    <tr>
+
+                    <tr style="background-color: #f0f0f0;">
                         <th>S.No.</th>
                         <th>Description</th>
                         <th>Qty</th>
@@ -132,28 +178,20 @@ function generateInvoice() {
             const cgstAmount = baseTotal * (item.cgst / 100);
             const sgstAmount = baseTotal * (item.sgst / 100);
             const itemTotal = baseTotal + cgstAmount + sgstAmount;
-
+            
             grossTotal += originalTotal;
             totalDiscount += discountAmount;
             totalCGST += cgstAmount;
             totalSGST += sgstAmount;
-
+            
             html += `
                 <tr>
-                    <td>${i + 1}</td>
-                    <td>${item.desc}</td>
-                    <td>${item.qty}</td>
-                    <td>₹${item.price.toFixed(2)}</td>
-                    <td>${item.discount}%</td>
-                    <td>${item.cgst}%</td>
-                    <td>${item.sgst}%</td>
-                    <td>₹${itemTotal.toFixed(2)}</td>
-                </tr>
-            `;
+                    <td>${i + 1}</td><td>${item.desc}</td><td>${item.qty}</td><td>₹${item.price.toFixed(2)}</td><td>${item.discount}%</td><td>${item.cgst}%</td><td>${item.sgst}%</td><td>₹${itemTotal.toFixed(2)}</td>
+                </tr>`;
         });
-
+        
         const grandTotal = grossTotal - totalDiscount + totalCGST + totalSGST;
-
+        
         html += `
                 </table>
                 <div style="text-align:right;margin-top:10px;font-size:14px;">
@@ -163,25 +201,16 @@ function generateInvoice() {
                     Total SGST: ₹${totalSGST.toFixed(2)}<br>
                     <strong>Grand Total: ₹${grandTotal.toFixed(2)}</strong>
                 </div>
-            </div>
-        `;
-
+            </div>`;
         return html;
     }
 
     const output = document.getElementById('invoiceOutput');
-    
-   output.innerHTML = `
-    <div>
-        ${generateCopy("Seller Copy")}
-        ${generateCopy("Customer Copy")}
-    </div>
-`;
-
-
+    output.innerHTML = `<div>${generateCopy("Seller Copy")} ${generateCopy("Customer Copy")}</div>`;
     output.style.display = 'block';
     document.getElementById('printBtn').disabled = false;
 }
+
 
 
 
